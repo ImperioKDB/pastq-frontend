@@ -21,6 +21,13 @@ export default function Home() {
               fontFamily: "'DM Sans', sans-serif", fontSize: '14px'
             }}>Browse</button>
           </Link>
+          <Link href="/dashboard">
+            <button style={{
+              padding: '8px 18px', background: 'transparent', border: '1px solid #065f46',
+              borderRadius: '8px', color: '#065f46', fontWeight: 600, cursor: 'pointer',
+              fontFamily: "'DM Sans', sans-serif", fontSize: '14px'
+            }}>Dashboard</button>
+          </Link>
           <Link href="/quiz">
             <button style={{
               padding: '8px 18px', background: '#065f46', border: 'none',
@@ -108,26 +115,14 @@ export default function Home() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           {[
-            {
-              icon: '🤖', title: 'AI Extraction',
-              desc: 'Upload any PDF and our AI automatically extracts every question, option, and answer.'
-            },
-            {
-              icon: '🔍', title: 'Smart Search',
-              desc: 'Filter questions by course, year, topic, or difficulty. Find exactly what you need.'
-            },
-            {
-              icon: '📝', title: 'Quiz Mode',
-              desc: 'Test yourself with randomized quizzes. Track your score and review wrong answers.'
-            },
-            {
-              icon: '📊', title: 'Dashboard',
-              desc: 'See question banks by course, track what\'s available, and monitor your progress.'
-            },
+            { icon: '🤖', title: 'AI Extraction', desc: 'Upload any PDF and our AI automatically extracts every question, option, and answer.' },
+            { icon: '🔍', title: 'Smart Search', desc: 'Filter questions by course, year, topic, or difficulty. Find exactly what you need.' },
+            { icon: '📝', title: 'Quiz Mode', desc: 'Test yourself with randomized quizzes. Track your score and review wrong answers.' },
+            { icon: '📊', title: 'Dashboard', desc: "See question banks by course, track what's available, and monitor your progress." },
           ].map((f, i) => (
             <div key={i} style={{
               background: '#fff', borderRadius: '16px', padding: '28px',
-              border: '1px solid #e2e8f0', transition: 'box-shadow 0.2s'
+              border: '1px solid #e2e8f0'
             }}>
               <div style={{ fontSize: '36px', marginBottom: '16px' }}>{f.icon}</div>
               <h3 style={{
@@ -142,9 +137,9 @@ export default function Home() {
 
       {/* CTA */}
       <section style={{
-        margin: '0 24px 72px', background: '#065f46', borderRadius: '20px',
+        background: '#065f46', borderRadius: '20px',
         padding: '56px 32px', textAlign: 'center', maxWidth: '900px',
-        marginLeft: 'auto', marginRight: 'auto'
+        marginLeft: 'auto', marginRight: 'auto', marginBottom: '72px', marginTop: '0'
       }}>
         <h2 style={{
           fontFamily: "'Sora', sans-serif", fontSize: '32px', fontWeight: 800,
@@ -172,4 +167,4 @@ export default function Home() {
 
     </main>
   );
-        }
+          }
