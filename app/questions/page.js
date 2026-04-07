@@ -7,11 +7,14 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 function renderMath(text) {
   if (!text) return text;
   return String(text)
+    // Negative exponents FIRST (must come before positive)
+    .replace(/\^-1/g, '⁻¹').replace(/\^-2/g, '⁻²').replace(/\^-3/g, '⁻³')
+    .replace(/\^-4/g, '⁻⁴').replace(/\^-5/g, '⁻⁵')
+    // Positive exponents
     .replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\^0/g, '⁰')
     .replace(/\^1/g, '¹').replace(/\^4/g, '⁴').replace(/\^5/g, '⁵')
     .replace(/\^6/g, '⁶').replace(/\^7/g, '⁷').replace(/\^8/g, '⁸')
     .replace(/\^9/g, '⁹').replace(/\^n/g, 'ⁿ').replace(/\^x/g, 'ˣ')
-    .replace(/\^-1/g, '⁻¹').replace(/\^-2/g, '⁻²').replace(/\^-3/g, '⁻³')
     .replace(/_0/g, '₀').replace(/_1/g, '₁').replace(/_2/g, '₂')
     .replace(/_3/g, '₃').replace(/_n/g, 'ₙ').replace(/_x/g, 'ₓ')
     .replace(/sqrt\(([^)]+)\)/g, '√($1)')
@@ -20,7 +23,7 @@ function renderMath(text) {
     .replace(/\bdelta\b/gi, 'δ').replace(/\bsigma\b/gi, 'σ')
     .replace(/\binfinity\b/gi, '∞')
     .replace(/\b>=\b/g, '≥').replace(/\b<=\b/g, '≤').replace(/\b!=\b/g, '≠');
-}
+    }
 
 function stripLetter(opt) {
   if (!opt) return opt;
