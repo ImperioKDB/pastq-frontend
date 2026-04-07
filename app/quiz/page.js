@@ -10,8 +10,13 @@ function stripLetter(opt) {
 }
 
 function renderMath(text) {
+function renderMath(text) {
   if (!text) return text;
   return String(text)
+    // Negative exponents FIRST (must come before positive)
+    .replace(/\^-1/g, '⁻¹').replace(/\^-2/g, '⁻²').replace(/\^-3/g, '⁻³')
+    .replace(/\^-4/g, '⁻⁴').replace(/\^-5/g, '⁻⁵')
+    // Positive exponents
     .replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\^0/g, '⁰')
     .replace(/\^1/g, '¹').replace(/\^4/g, '⁴').replace(/\^5/g, '⁵')
     .replace(/\^6/g, '⁶').replace(/\^7/g, '⁷').replace(/\^8/g, '⁸')
@@ -24,7 +29,7 @@ function renderMath(text) {
     .replace(/\bdelta\b/gi, 'δ').replace(/\bsigma\b/gi, 'σ')
     .replace(/\binfinity\b/gi, '∞')
     .replace(/\b>=\b/g, '≥').replace(/\b<=\b/g, '≤').replace(/\b!=\b/g, '≠');
-}
+    }
 
 export default function QuizPage() {
   const [questions, setQuestions] = useState([]);
