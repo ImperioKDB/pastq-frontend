@@ -248,7 +248,10 @@ export default function Dashboard() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`${API}/api/questions?course_id=0f912f44-96f0-403f-82a2-03ffcaf17df0`);
+        const coursesRes = await fetch(`${API}/api/courses`);
+const coursesData = await coursesRes.json();
+if (!Array.isArray(coursesData) || coursesData.length === 0) return;
+const res = await fetch(`${API}/api/questions?course_id=${coursesData[0].id}`);
         const data = await res.json();
         if (Array.isArray(data)) setQuestions(data);
       } catch (e) {
