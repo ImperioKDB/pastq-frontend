@@ -6,17 +6,14 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 
 function stripLetter(opt) {
   if (!opt) return opt;
-  return String(opt).replace(/^[A-Da-d][\.\)]\s*/, '').trim();
+  return String(opt).replace(/^[A-Ea-e][\.\)]\s*/, '').trim();
 }
 
 function renderMath(text) {
-function renderMath(text) {
   if (!text) return text;
   return String(text)
-    // Negative exponents FIRST (must come before positive)
     .replace(/\^-1/g, '⁻¹').replace(/\^-2/g, '⁻²').replace(/\^-3/g, '⁻³')
     .replace(/\^-4/g, '⁻⁴').replace(/\^-5/g, '⁻⁵')
-    // Positive exponents
     .replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\^0/g, '⁰')
     .replace(/\^1/g, '¹').replace(/\^4/g, '⁴').replace(/\^5/g, '⁵')
     .replace(/\^6/g, '⁶').replace(/\^7/g, '⁷').replace(/\^8/g, '⁸')
@@ -29,9 +26,11 @@ function renderMath(text) {
     .replace(/\bdelta\b/gi, 'δ').replace(/\bsigma\b/gi, 'σ')
     .replace(/\binfinity\b/gi, '∞')
     .replace(/\b>=\b/g, '≥').replace(/\b<=\b/g, '≤').replace(/\b!=\b/g, '≠');
-    }
+}
 
 export default function QuizPage() {
+  const [courses, setCourses] = useState([]);
+  const [courseId, setCourseId] = useState('');
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
@@ -42,15 +41,30 @@ export default function QuizPage() {
   const [count, setCount] = useState('10');
   const [year, setYear] = useState('');
 
+  useEffect(() => {
+    async function loadCourses() {
+      try {
+        const res = await fetch(`${API}/api/courses`);
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setCourses(data);
+          setCourseId(data[0].id);
+        }
+      } catch (e) { console.error(e); }
+    }
+    loadCourses();
+  }, []);
+
   async function startQuiz() {
+    if (!courseId) return;
     setLoading(true);
     try {
-      let url = API + '/api/questions?course_id=0f912f44-96f0-403f-82a2-03ffcaf17df0&type=mcq';
+      let url = `${API}/api/questions?course_id=${courseId}&type=mcq`;
       if (year) url += '&year=' + year;
       const res = await fetch(url);
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) {
-        alert('No MCQ questions found.');
+        alert('No MCQ questions found for this course.');
         setLoading(false);
         return;
       }
@@ -98,9 +112,7 @@ export default function QuizPage() {
         </span>
       </Link>
       <Link href="/questions">
-        <button style={{ padding: '8px 18px', background: 'transparent', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#374151', fontWeight: 500, cursor: 'pointer', fontSize: '14px' }}>
-          Browse
-        </button>
+        <button style={{ padding: '8px 18px', background: 'transparent', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#374151', fontWeight: 500, cursor: 'pointer', fontSize: '14px' }}>Browse</button>
       </Link>
     </nav>
   );
@@ -116,19 +128,29 @@ export default function QuizPage() {
             <p style={{ color: '#6b7280', textAlign: 'center', margin: '0 0 32px' }}>Test yourself with past exam questions</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Course</label>
+                <select value={courseId} onChange={e => setCourseId(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
+                  {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
+                </select>
+              </div>
+              <div>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Year (optional)</label>
-                <input value={year} onChange={e => setYear(e.target.value)} placeholder="e.g. 2023" style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box' }} />
+                <input value={year} onChange={e => setYear(e.target.value)} placeholder="e.g. 2023"
+                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box' }} />
               </div>
               <div>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Number of Questions</label>
-                <select value={count} onChange={e => setCount(e.target.value)} style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
+                <select value={count} onChange={e => setCount(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
                   <option value="5">5 Questions</option>
                   <option value="10">10 Questions</option>
                   <option value="20">20 Questions</option>
                   <option value="30">30 Questions</option>
                 </select>
               </div>
-              <button onClick={startQuiz} disabled={loading} style={{ padding: '14px', background: loading ? '#94a3b8' : '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px' }}>
+              <button onClick={startQuiz} disabled={loading || !courseId}
+                style={{ padding: '14px', background: loading ? '#94a3b8' : '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px' }}>
                 {loading ? 'Loading...' : 'Start Quiz →'}
               </button>
             </div>
@@ -196,14 +218,8 @@ export default function QuizPage() {
           </div>
         </div>
         <div style={{ background: '#fff', borderRadius: '20px', padding: '32px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-          {q.topic && (
-            <span style={{ fontSize: '12px', fontWeight: 600, padding: '3px 10px', background: '#f1f5f9', color: '#475569', borderRadius: '100px', display: 'inline-block', marginBottom: '16px' }}>
-              {q.topic}
-            </span>
-          )}
-          <p style={{ fontFamily: "'Sora',sans-serif", fontSize: '18px', fontWeight: 600, color: '#0f172a', lineHeight: 1.6, margin: '0 0 28px' }}>
-            {renderMath(q.content)}
-          </p>
+          {q.topic && <span style={{ fontSize: '12px', fontWeight: 600, padding: '3px 10px', background: '#f1f5f9', color: '#475569', borderRadius: '100px', display: 'inline-block', marginBottom: '16px' }}>{q.topic}</span>}
+          <p style={{ fontFamily: "'Sora',sans-serif", fontSize: '18px', fontWeight: 600, color: '#0f172a', lineHeight: 1.6, margin: '0 0 28px' }}>{renderMath(q.content)}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {q.options && q.options.map((opt, j) => {
               let bg = '#f8fafc', border = '#e2e8f0', color = '#374151';
@@ -231,4 +247,4 @@ export default function QuizPage() {
       </div>
     </main>
   );
-  }
+                          }
