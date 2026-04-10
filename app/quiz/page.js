@@ -13,61 +13,54 @@ function renderMath(text) {
   if (!text) return text;
   return String(text)
     .replace(/\^-1/g, '⁻¹').replace(/\^-2/g, '⁻²').replace(/\^-3/g, '⁻³')
-    .replace(/\^-4/g, '⁻⁴').replace(/\^-5/g, '⁻⁵')
-    .replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\^0/g, '⁰')
-    .replace(/\^1/g, '¹').replace(/\^4/g, '⁴').replace(/\^5/g, '⁵')
-    .replace(/\^6/g, '⁶').replace(/\^7/g, '⁷').replace(/\^8/g, '⁸')
-    .replace(/\^9/g, '⁹').replace(/\^n/g, 'ⁿ').replace(/\^x/g, 'ˣ')
-    .replace(/_0/g, '₀').replace(/_1/g, '₁').replace(/_2/g, '₂')
-    .replace(/_3/g, '₃').replace(/_n/g, 'ₙ').replace(/_x/g, 'ₓ')
+    .replace(/\^2/g, '²').replace(/\^3/g, '³')
     .replace(/sqrt\(([^)]+)\)/g, '√($1)')
-    .replace(/\bpi\b/gi, 'π').replace(/\btheta\b/gi, 'θ')
-    .replace(/\balpha\b/gi, 'α').replace(/\bbeta\b/gi, 'β')
-    .replace(/\bdelta\b/gi, 'δ').replace(/\bsigma\b/gi, 'σ')
-    .replace(/\binfinity\b/gi, '∞')
-    .replace(/\b>=\b/g, '≥').replace(/\b<=\b/g, '≤').replace(/\b!=\b/g, '≠');
+    .replace(/\bpi\b/gi, 'π').replace(/\btheta\b/gi, 'θ');
 }
 
 export default function QuizPage() {
-  const [courses, setCourses] = useState([]);
-  const [courseId, setCourseId] = useState('');
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState([]); // New state for courses
+  const [courseId, setCourseId] = useState('');
+  const [year, setYear] = useState('');
+  const [count, setCount] = useState('10');
+
+  const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [done, setDone] = useState(false);
-  const [count, setCount] = useState('10');
-  const [year, setYear] = useState('');
 
+  // Fetch courses on mount
   useEffect(() => {
-    async function loadCourses() {
+    async function fetchCourses() {
       try {
         const res = await fetch(`${API}/api/courses`);
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setCourses(data);
-          setCourseId(data[0].id);
-        }
-      } catch (e) { console.error(e); }
+        if (Array.isArray(data)) setCourses(data);
+      } catch (e) {
+        console.error("Error fetching courses", e);
+      }
     }
-    loadCourses();
+    fetchCourses();
   }, []);
 
   async function startQuiz() {
-    if (!courseId) return;
     setLoading(true);
     try {
-      let url = `${API}/api/questions?course_id=${courseId}&type=mcq`;
+      let url = `${API}/api/questions?type=mcq&course_id=${courseId}`;
       if (year) url += '&year=' + year;
+
       const res = await fetch(url);
       const data = await res.json();
+
       if (!Array.isArray(data) || data.length === 0) {
         alert('No MCQ questions found for this course.');
         setLoading(false);
         return;
       }
+
       const shuffled = data.sort(() => Math.random() - 0.5).slice(0, parseInt(count));
       setQuestions(shuffled);
       setAnswers([]);
@@ -84,6 +77,7 @@ export default function QuizPage() {
   function handleNext() {
     const newAnswers = [...answers, { q: questions[current], selected }];
     setAnswers(newAnswers);
+
     if (current + 1 >= questions.length) {
       setDone(true);
     } else {
@@ -107,7 +101,7 @@ export default function QuizPage() {
   const NavBar = () => (
     <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 32px', background: '#fff', borderBottom: '1px solid #e2e8f0' }}>
       <Link href="/">
-        <span style={{ fontFamily: "'Sora',sans-serif", fontWeight: 800, fontSize: '22px', color: '#065f46', cursor: 'pointer' }}>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: '22px', color: '#065f46', cursor: 'pointer' }}>
           Past<span style={{ color: '#f59e0b' }}>Q</span>
         </span>
       </Link>
@@ -121,36 +115,44 @@ export default function QuizPage() {
     return (
       <main style={{ minHeight: '100vh', background: '#f8fafc' }}>
         <NavBar />
-        <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px' }}>
-          <div style={{ background: '#fff', borderRadius: '20px', padding: '40px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '48px', textAlign: 'center', marginBottom: '16px' }}>📝</div>
-            <h1 style={{ fontFamily: "'Sora',sans-serif", fontSize: '26px', fontWeight: 700, color: '#0f172a', textAlign: 'center', margin: '0 0 8px' }}>Quiz Mode</h1>
-            <p style={{ color: '#6b7280', textAlign: 'center', margin: '0 0 32px' }}>Test yourself with past exam questions</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ maxWidth: '500px', margin: '60px auto', padding: '0 24px' }}>
+          <div style={{ background: '#fff', borderRadius: '20px', padding: '40px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+            <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: '24px', fontWeight: 700, textAlign: 'center', marginBottom: '8px' }}>Practice Quiz</h1>
+            <p style={{ textAlign: 'center', color: '#6b7280', fontSize: '14px', marginBottom: '32px' }}>Test your knowledge with randomized MCQs</p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              
+              {/* Updated Course Selector */}
               <div>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Course</label>
-                <select value={courseId} onChange={e => setCourseId(e.target.value)}
-                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
-                  {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Select Course</label>
+                <select 
+                  value={courseId} 
+                  onChange={e => setCourseId(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}
+                >
+                  <option value="">Choose a course...</option>
+                  {courses.map(c => (
+                    <option key={c.id} value={c.id}>{c.code} — {c.title}</option>
+                  ))}
                 </select>
               </div>
+
               <div>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Year (optional)</label>
-                <input value={year} onChange={e => setYear(e.target.value)} placeholder="e.g. 2023"
-                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box' }} />
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Year (Optional)</label>
+                <input type="text" placeholder="e.g. 2023" value={year} onChange={e => setYear(e.target.value)} style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box' }} />
               </div>
+
               <div>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Number of Questions</label>
-                <select value={count} onChange={e => setCount(e.target.value)}
-                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
+                <select value={count} onChange={e => setCount(e.target.value)} style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
                   <option value="5">5 Questions</option>
                   <option value="10">10 Questions</option>
                   <option value="20">20 Questions</option>
                   <option value="30">30 Questions</option>
                 </select>
               </div>
-              <button onClick={startQuiz} disabled={loading || !courseId}
-                style={{ padding: '14px', background: loading ? '#94a3b8' : '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px' }}>
+
+              <button onClick={startQuiz} disabled={loading || !courseId} style={{ padding: '14px', background: loading ? '#94a3b8' : '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px' }}>
                 {loading ? 'Loading...' : 'Start Quiz →'}
               </button>
             </div>
@@ -166,25 +168,22 @@ export default function QuizPage() {
       <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '40px 24px' }}>
         <div style={{ maxWidth: '640px', margin: '0 auto' }}>
           <div style={{ background: '#fff', borderRadius: '20px', padding: '40px', border: '1px solid #e2e8f0', textAlign: 'center', marginBottom: '24px' }}>
-            <div style={{ fontSize: '56px', marginBottom: '8px' }}>{pct >= 70 ? '🏆' : pct >= 50 ? '👍' : '📚'}</div>
-            <div style={{ fontFamily: "'Sora',sans-serif", fontSize: '56px', fontWeight: 800, color: scoreColor }}>{pct}%</div>
-            <p style={{ color: '#6b7280', margin: '12px 0 28px' }}>You got <strong>{score}</strong> of <strong>{answers.length}</strong> correct</p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button onClick={restart} style={{ padding: '12px 28px', background: '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>Try Again</button>
-              <Link href="/questions">
-                <button style={{ padding: '12px 28px', background: 'transparent', border: '1px solid #e2e8f0', borderRadius: '10px', color: '#374151', fontWeight: 600, cursor: 'pointer' }}>Browse Questions</button>
-              </Link>
-            </div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>{pct >= 50 ? '🎉' : '📚'}</div>
+            <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Quiz Completed!</h2>
+            <div style={{ fontSize: '48px', fontWeight: 800, color: scoreColor, margin: '20px 0' }}>{pct}%</div>
+            <p style={{ color: '#6b7280', marginBottom: '32px' }}>You got {score} out of {questions.length} correct.</p>
+            <button onClick={restart} style={{ padding: '14px 32px', background: '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>Try Another Course</button>
           </div>
-          <h2 style={{ fontFamily: "'Sora',sans-serif", fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '16px' }}>Review</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+          <div style={{ background: '#fff', borderRadius: '20px', padding: '32px', border: '1px solid #e2e8f0' }}>
+            <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Review Answers</h3>
             {answers.map((a, i) => {
               const correct = a.selected === a.q.answer;
               return (
-                <div key={i} style={{ background: '#fff', borderRadius: '12px', padding: '16px 20px', border: `1px solid ${correct ? '#86efac' : '#fca5a5'}` }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '13px', color: '#94a3b8' }}>Q{i + 1}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: correct ? '#16a34a' : '#dc2626' }}>{correct ? '✓ Correct' : '✗ Wrong'}</span>
+                <div key={i} style={{ padding: '16px 0', borderBottom: i === answers.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: correct ? '#16a34a' : '#dc2626' }}>{correct ? '✓ Correct' : '✕ Incorrect'}</span>
+                    {a.q.topic && <span style={{ fontSize: '10px', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', color: '#64748b' }}>{a.q.topic}</span>}
                   </div>
                   <p style={{ margin: '0 0 8px', fontSize: '14px', color: '#0f172a' }}>{renderMath(a.q.content)}</p>
                   {!correct && (
@@ -217,28 +216,23 @@ export default function QuizPage() {
             <div style={{ background: '#065f46', borderRadius: '100px', height: '6px', width: `${progress}%`, transition: 'width 0.3s' }} />
           </div>
         </div>
+
         <div style={{ background: '#fff', borderRadius: '20px', padding: '32px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-          {q.topic && <span style={{ fontSize: '12px', fontWeight: 600, padding: '3px 10px', background: '#f1f5f9', color: '#475569', borderRadius: '100px', display: 'inline-block', marginBottom: '16px' }}>{q.topic}</span>}
-          <p style={{ fontFamily: "'Sora',sans-serif", fontSize: '18px', fontWeight: 600, color: '#0f172a', lineHeight: 1.6, margin: '0 0 28px' }}>{renderMath(q.content)}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {q.options && q.options.map((opt, j) => {
-              let bg = '#f8fafc', border = '#e2e8f0', color = '#374151';
-              if (selected !== null) {
-                if (opt === q.answer) { bg = '#dcfce7'; border = '#86efac'; color = '#15803d'; }
-                else if (opt === selected) { bg = '#fee2e2'; border = '#fca5a5'; color = '#dc2626'; }
-              }
-              return (
-                <button key={j} onClick={() => { if (selected === null) setSelected(opt); }}
-                  style={{ padding: '14px 16px', background: bg, border: `2px solid ${border}`, borderRadius: '10px', color, fontWeight: 500, fontSize: '15px', cursor: selected !== null ? 'default' : 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0, background: selected !== null && opt === q.answer ? '#16a34a' : selected === opt ? '#dc2626' : '#e2e8f0', color: (selected !== null && (opt === q.answer || opt === selected)) ? '#fff' : '#6b7280', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>
-                    {String.fromCharCode(65 + j)}
-                  </span>
-                  {renderMath(stripLetter(opt))}
-                </button>
-              );
-            })}
+          {q.topic && <span style={{ fontSize: '11px', fontWeight: 700, color: '#065f46', background: '#ecfdf5', padding: '4px 10px', borderRadius: '6px', display: 'inline-block', marginBottom: '12px' }}>{q.topic.toUpperCase()}</span>}
+          <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: 500, lineHeight: 1.6, marginBottom: '24px' }}>{renderMath(q.content)}</div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {q.options.map((opt, j) => (
+              <button key={j} onClick={() => setSelected(opt)} style={{ textAlign: 'left', padding: '16px', borderRadius: '12px', border: `2px solid ${selected === opt ? '#065f46' : '#f1f5f9'}`, background: selected === opt ? '#f0fdf4' : '#fff', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <span style={{ width: '28px', height: '28px', borderRadius: '50%', background: selected === opt ? '#065f46' : '#f1f5f9', color: selected === opt ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>
+                  {String.fromCharCode(65 + j)}
+                </span>
+                {renderMath(stripLetter(opt))}
+              </button>
+            ))}
           </div>
         </div>
+
         {selected !== null && (
           <button onClick={handleNext} style={{ width: '100%', padding: '15px', background: '#065f46', border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: 'pointer' }}>
             {current + 1 >= questions.length ? 'See Results →' : 'Next →'}
@@ -247,4 +241,4 @@ export default function QuizPage() {
       </div>
     </main>
   );
-                          }
+}
