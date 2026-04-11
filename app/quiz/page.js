@@ -21,7 +21,7 @@ function renderMath(text) {
 export default function QuizPage() {
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState([]); // New state for courses
+  const [courses, setCourses] = useState([]);
   const [courseId, setCourseId] = useState('');
   const [year, setYear] = useState('');
   const [count, setCount] = useState('10');
@@ -32,7 +32,6 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState([]);
   const [done, setDone] = useState(false);
 
-  // Fetch courses on mount
   useEffect(() => {
     async function fetchCourses() {
       try {
@@ -40,7 +39,7 @@ export default function QuizPage() {
         const data = await res.json();
         if (Array.isArray(data)) setCourses(data);
       } catch (e) {
-        console.error("Error fetching courses", e);
+        console.error('Error fetching courses', e);
       }
     }
     fetchCourses();
@@ -77,7 +76,6 @@ export default function QuizPage() {
   function handleNext() {
     const newAnswers = [...answers, { q: questions[current], selected }];
     setAnswers(newAnswers);
-
     if (current + 1 >= questions.length) {
       setDone(true);
     } else {
@@ -121,12 +119,11 @@ export default function QuizPage() {
             <p style={{ textAlign: 'center', color: '#6b7280', fontSize: '14px', marginBottom: '32px' }}>Test your knowledge with randomized MCQs</p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              
-              {/* Updated Course Selector */}
+
               <div>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Select Course</label>
-                <select 
-                  value={courseId} 
+                <select
+                  value={courseId}
                   onChange={e => setCourseId(e.target.value)}
                   style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}
                 >
@@ -139,12 +136,22 @@ export default function QuizPage() {
 
               <div>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Year (Optional)</label>
-                <input type="text" placeholder="e.g. 2023" value={year} onChange={e => setYear(e.target.value)} style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box' }} />
+                <input
+                  type="text"
+                  placeholder="e.g. 2023"
+                  value={year}
+                  onChange={e => setYear(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box' }}
+                />
               </div>
 
               <div>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>Number of Questions</label>
-                <select value={count} onChange={e => setCount(e.target.value)} style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}>
+                <select
+                  value={count}
+                  onChange={e => setCount(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', background: '#fff', boxSizing: 'border-box' }}
+                >
                   <option value="5">5 Questions</option>
                   <option value="10">10 Questions</option>
                   <option value="20">20 Questions</option>
@@ -152,7 +159,11 @@ export default function QuizPage() {
                 </select>
               </div>
 
-              <button onClick={startQuiz} disabled={loading || !courseId} style={{ padding: '14px', background: loading ? '#94a3b8' : '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px' }}>
+              <button
+                onClick={startQuiz}
+                disabled={!courseId || loading}
+                style={{ width: '100%', padding: '14px', background: courseId ? '#065f46' : '#94a3b8', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: 700, cursor: courseId ? 'pointer' : 'not-allowed', fontFamily: "'Sora', sans-serif" }}
+              >
                 {loading ? 'Loading...' : 'Start Quiz →'}
               </button>
             </div>
@@ -163,38 +174,37 @@ export default function QuizPage() {
   }
 
   if (done) {
-    const scoreColor = pct >= 70 ? '#16a34a' : pct >= 50 ? '#d97706' : '#dc2626';
     return (
-      <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '40px 24px' }}>
-        <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-          <div style={{ background: '#fff', borderRadius: '20px', padding: '40px', border: '1px solid #e2e8f0', textAlign: 'center', marginBottom: '24px' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>{pct >= 50 ? '🎉' : '📚'}</div>
-            <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Quiz Completed!</h2>
-            <div style={{ fontSize: '48px', fontWeight: 800, color: scoreColor, margin: '20px 0' }}>{pct}%</div>
-            <p style={{ color: '#6b7280', marginBottom: '32px' }}>You got {score} out of {questions.length} correct.</p>
-            <button onClick={restart} style={{ padding: '14px 32px', background: '#065f46', border: 'none', borderRadius: '10px', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>Try Another Course</button>
-          </div>
+      <main style={{ minHeight: '100vh', background: '#f8fafc' }}>
+        <NavBar />
+        <div style={{ maxWidth: '600px', margin: '60px auto', padding: '0 24px' }}>
+          <div style={{ background: '#fff', borderRadius: '20px', padding: '40px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+            <div style={{ fontSize: '64px', marginBottom: '16px' }}>{pct >= 70 ? '🎉' : pct >= 50 ? '👍' : '📚'}</div>
+            <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: '28px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+              {score}/{answers.length}
+            </h2>
+            <p style={{ fontSize: '18px', color: pct >= 70 ? '#16a34a' : pct >= 50 ? '#d97706' : '#dc2626', fontWeight: 600, marginBottom: '32px' }}>
+              {pct}% — {pct >= 70 ? 'Excellent!' : pct >= 50 ? 'Good effort' : 'Keep studying'}
+            </p>
 
-          <div style={{ background: '#fff', borderRadius: '20px', padding: '32px', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Review Answers</h3>
-            {answers.map((a, i) => {
-              const correct = a.selected === a.q.answer;
-              return (
-                <div key={i} style={{ padding: '16px 0', borderBottom: i === answers.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: correct ? '#16a34a' : '#dc2626' }}>{correct ? '✓ Correct' : '✕ Incorrect'}</span>
-                    {a.q.topic && <span style={{ fontSize: '10px', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', color: '#64748b' }}>{a.q.topic}</span>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px', textAlign: 'left' }}>
+              {answers.map((a, i) => {
+                const correct = a.selected === a.q.answer;
+                return (
+                  <div key={i} style={{ padding: '16px', borderRadius: '10px', background: correct ? '#f0fdf4' : '#fef2f2', border: `1px solid ${correct ? '#bbf7d0' : '#fecaca'}` }}>
+                    <p style={{ fontSize: '14px', color: '#1e293b', marginBottom: '8px', fontWeight: 500 }}>{renderMath(a.q.content)}</p>
+                    {!correct && (
+                      <p style={{ fontSize: '13px', color: '#dc2626', margin: 0 }}>Your answer: {renderMath(a.selected) || 'Skipped'}</p>
+                    )}
+                    <p style={{ fontSize: '13px', color: '#16a34a', margin: 0 }}>Correct: {renderMath(a.q.answer)}</p>
                   </div>
-                  <p style={{ margin: '0 0 8px', fontSize: '14px', color: '#0f172a' }}>{renderMath(a.q.content)}</p>
-                  {!correct && (
-                    <div style={{ fontSize: '13px', color: '#6b7280' }}>
-                      Your answer: <span style={{ color: '#dc2626', fontWeight: 600 }}>{renderMath(stripLetter(a.selected)) || 'None'}</span>
-                      {' · '}Correct: <span style={{ color: '#16a34a', fontWeight: 600 }}>{renderMath(stripLetter(a.q.answer))}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            <button onClick={restart} style={{ width: '100%', padding: '14px', background: '#065f46', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>
+              Try Again
+            </button>
           </div>
         </div>
       </main>
@@ -202,43 +212,50 @@ export default function QuizPage() {
   }
 
   const q = questions[current];
-  const progress = (current / questions.length) * 100;
+  const opts = q.options ? q.options.map(stripLetter) : [];
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '40px 24px' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '32px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '13px', color: '#6b7280' }}>Question {current + 1} of {questions.length}</span>
-            <button onClick={restart} style={{ fontSize: '13px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }}>✕ Exit</button>
-          </div>
-          <div style={{ background: '#e2e8f0', borderRadius: '100px', height: '6px' }}>
-            <div style={{ background: '#065f46', borderRadius: '100px', height: '6px', width: `${progress}%`, transition: 'width 0.3s' }} />
-          </div>
+    <main style={{ minHeight: '100vh', background: '#f8fafc' }}>
+      <NavBar />
+      <div style={{ maxWidth: '600px', margin: '40px auto', padding: '0 24px' }}>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: 500 }}>Question {current + 1} of {questions.length}</span>
+          <span style={{ fontSize: '14px', color: '#065f46', fontWeight: 600 }}>{q.courses?.code} • {q.year}</span>
         </div>
 
-        <div style={{ background: '#fff', borderRadius: '20px', padding: '32px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-          {q.topic && <span style={{ fontSize: '11px', fontWeight: 700, color: '#065f46', background: '#ecfdf5', padding: '4px 10px', borderRadius: '6px', display: 'inline-block', marginBottom: '12px' }}>{q.topic.toUpperCase()}</span>}
-          <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: 500, lineHeight: 1.6, marginBottom: '24px' }}>{renderMath(q.content)}</div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {q.options.map((opt, j) => (
-              <button key={j} onClick={() => setSelected(opt)} style={{ textAlign: 'left', padding: '16px', borderRadius: '12px', border: `2px solid ${selected === opt ? '#065f46' : '#f1f5f9'}`, background: selected === opt ? '#f0fdf4' : '#fff', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <span style={{ width: '28px', height: '28px', borderRadius: '50%', background: selected === opt ? '#065f46' : '#f1f5f9', color: selected === opt ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>
-                  {String.fromCharCode(65 + j)}
-                </span>
-                {renderMath(stripLetter(opt))}
-              </button>
-            ))}
-          </div>
+        <div style={{ background: '#fff', borderRadius: '16px', padding: '32px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+          <p style={{ fontSize: '18px', color: '#1e293b', lineHeight: 1.7, margin: 0, fontWeight: 500 }}>{renderMath(q.content)}</p>
         </div>
 
-        {selected !== null && (
-          <button onClick={handleNext} style={{ width: '100%', padding: '15px', background: '#065f46', border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 700, fontSize: '16px', cursor: 'pointer' }}>
-            {current + 1 >= questions.length ? 'See Results →' : 'Next →'}
-          </button>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+          {opts.map((opt, idx) => (
+            <button
+              key={idx}
+              onClick={() => setSelected(opt)}
+              style={{
+                width: '100%', padding: '16px 20px', borderRadius: '12px', textAlign: 'left',
+                fontSize: '15px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                border: selected === opt ? '2px solid #065f46' : '1px solid #e2e8f0',
+                background: selected === opt ? '#f0fdf4' : '#fff',
+                color: '#1e293b', fontWeight: selected === opt ? 600 : 400,
+                transition: 'all 0.15s'
+              }}
+            >
+              <strong style={{ marginRight: '10px', color: '#065f46' }}>{String.fromCharCode(65 + idx)}.</strong>
+              {renderMath(opt)}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={handleNext}
+          disabled={!selected}
+          style={{ width: '100%', padding: '14px', background: selected ? '#065f46' : '#94a3b8', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: 700, cursor: selected ? 'pointer' : 'not-allowed', fontFamily: "'Sora', sans-serif" }}
+        >
+          {current + 1 === questions.length ? 'Finish Quiz' : 'Next Question →'}
+        </button>
       </div>
     </main>
   );
-}
+  }
