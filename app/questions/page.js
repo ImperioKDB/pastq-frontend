@@ -16,26 +16,22 @@ function renderMath(text) {
 
 export default function QuestionsPage() {
   const [questions, setQuestions] = useState([]);
-  const [courses, setCourses] = useState([]); [span_5](start_span)//[span_5](end_span)
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter States
   const [courseId, setCourseId] = useState('');
   const [topic, setTopic] = useState('');
   const [year, setYear] = useState('');
 
-  // 1. Fetch initial data (Courses and Questions)
   useEffect(() => {
     async function init() {
       try {
         setLoading(true);
-        [span_6](start_span)// Fetch all courses for the dropdown[span_6](end_span)
         const cRes = await fetch(`${API}/api/courses`);
         const cData = await cRes.json();
         if (Array.isArray(cData)) setCourses(cData);
 
-        // Fetch initial questions
         const qRes = await fetch(`${API}/api/questions`);
         const qData = await qRes.json();
         if (Array.isArray(qData)) setQuestions(qData);
@@ -48,7 +44,6 @@ export default function QuestionsPage() {
     init();
   }, []);
 
-  [span_7](start_span)// 2. Handle Filter Action[span_7](end_span)
   const handleFilter = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -74,14 +69,13 @@ export default function QuestionsPage() {
     window.location.reload();
   };
 
-  [span_8](start_span)[span_9](start_span)// Derive unique years and topics from currently loaded questions[span_8](end_span)[span_9](end_span)
   const availableYears = [...new Set(questions.map(q => q.year).filter(Boolean))].sort((a, b) => b - a);
   const availableTopics = [...new Set(questions.map(q => q.topic).filter(Boolean))].sort();
 
   return (
     <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '40px 24px' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        
+
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: '28px', fontWeight: 700, color: '#0f172a' }}>
             Browse Questions
@@ -90,30 +84,30 @@ export default function QuestionsPage() {
         </div>
 
         {/* Filter Form */}
-        <form onSubmit={handleFilter} style={{ 
-          background: '#fff', padding: '24px', borderRadius: '12px', 
-          border: '1px solid #e2e8f0', display: 'grid', 
+        <form onSubmit={handleFilter} style={{
+          background: '#fff', padding: '24px', borderRadius: '12px',
+          border: '1px solid #e2e8f0', display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px',
           marginBottom: '32px'
         }}>
           <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>COURSE</label>
-            <select 
-              value={courseId} 
+            <select
+              value={courseId}
               onChange={e => setCourseId(e.target.value)}
               style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}
             >
               <option value="">Select Course</option>
               {courses.map(c => (
-                <option key={c.id} value={c.id}>{c.code} - {c.title}</option>
+                <option key={c.id} value={c.id}>{c.code} - {c.name}</option>
               ))}
             </select>
           </div>
 
           <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>YEAR</label>
-            <select 
-              value={year} 
+            <select
+              value={year}
               onChange={e => setYear(e.target.value)}
               style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}
             >
@@ -124,8 +118,8 @@ export default function QuestionsPage() {
 
           <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>TOPIC</label>
-            <select 
-              value={topic} 
+            <select
+              value={topic}
               onChange={e => setTopic(e.target.value)}
               style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}
             >
@@ -158,13 +152,13 @@ export default function QuestionsPage() {
                   <span style={{ fontSize: '12px', color: '#94a3b8' }}>{q.topic}</span>
                 </div>
                 <p style={{ fontSize: '16px', color: '#1e293b', lineHeight: 1.6 }}>{renderMath(q.content)}</p>
-                
+
                 {q.options && (
                   <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     {q.options.map((opt, idx) => (
-                      <div key={idx} style={{ 
+                      <div key={idx} style={{
                         padding: '10px', border: '1px solid #f1f5f9', borderRadius: '6px', fontSize: '14px',
-                        background: opt === q.answer ? '#dcfce7' : '#f8fafc' 
+                        background: opt === q.answer ? '#dcfce7' : '#f8fafc'
                       }}>
                         <strong>{String.fromCharCode(65 + idx)}.</strong> {renderMath(opt)}
                       </div>
@@ -178,5 +172,4 @@ export default function QuestionsPage() {
       </div>
     </main>
   );
-    }
-                                     
+         }
