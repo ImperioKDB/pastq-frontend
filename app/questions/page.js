@@ -36,7 +36,7 @@ export default function QuestionsPage() {
         const qData = await qRes.json();
         if (Array.isArray(qData)) setQuestions(qData);
       } catch (e) {
-        setError("Failed to connect to the server.");
+        setError('Failed to connect to the server.');
       } finally {
         setLoading(false);
       }
@@ -57,7 +57,7 @@ export default function QuestionsPage() {
       const data = await res.json();
       setQuestions(Array.isArray(data) ? data : []);
     } catch (e) {
-      setError("Error filtering questions.");
+      setError('Error filtering questions.');
     }
     setLoading(false);
   };
@@ -83,7 +83,6 @@ export default function QuestionsPage() {
           <p style={{ color: '#6b7280' }}>{questions.length} questions found</p>
         </div>
 
-        {/* Filter Form */}
         <form onSubmit={handleFilter} style={{
           background: '#fff', padding: '24px', borderRadius: '12px',
           border: '1px solid #e2e8f0', display: 'grid',
@@ -99,7 +98,7 @@ export default function QuestionsPage() {
             >
               <option value="">Select Course</option>
               {courses.map(c => (
-                <option key={c.id} value={c.id}>{c.code} - {c.name}</option>
+                <option key={c.id} value={c.id}>{c.code} - {c.title}</option>
               ))}
             </select>
           </div>
@@ -138,9 +137,12 @@ export default function QuestionsPage() {
           </div>
         </form>
 
-        {/* Results List */}
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#dc2626' }}>{error}</div>
+        ) : questions.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>No questions found.</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {questions.map((q) => (
@@ -172,4 +174,4 @@ export default function QuestionsPage() {
       </div>
     </main>
   );
-         }
+  }
