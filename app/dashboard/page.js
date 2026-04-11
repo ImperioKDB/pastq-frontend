@@ -27,7 +27,7 @@ export default function Dashboard() {
   }, []);
 
   const courseCode = questions[0]?.courses?.code || 'CSC 101';
-  const courseTitle = questions[0]?.courses?.name || '';
+  const courseTitle = questions[0]?.courses?.title || '';
 
   const mcqCount = questions.filter(q => q.type === 'mcq').length;
   const theoryCount = questions.filter(q => q.type === 'theory').length;
@@ -43,11 +43,7 @@ export default function Dashboard() {
   return (
     <main style={{ minHeight: '100vh', background: '#f8fafc' }}>
 
-      <nav style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '18px 32px', background: '#fff', borderBottom: '1px solid #e2e8f0',
-        position: 'sticky', top: 0, zIndex: 100
-      }}>
+      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 32px', background: '#fff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 100 }}>
         <Link href="/">
           <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: '22px', color: '#065f46', cursor: 'pointer' }}>
             Past<span style={{ color: '#f59e0b' }}>Q</span>
@@ -168,4 +164,4 @@ export default function Dashboard() {
       </div>
     </main>
   );
-}
+    }
