@@ -21,7 +21,7 @@ export default function DashboardPage() {
 
       const { data: profile } = await supabase
         .from('user_profiles')
-        .select('*, schools(name), departments(name), courses(id, name, code)')
+        .select('*, schools(name), departments(name), courses(id, title, code)')
         .eq('user_id', user.id)
         .single()
 
@@ -56,7 +56,7 @@ export default function DashboardPage() {
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '4px' }}>Dashboard</h1>
         <p style={{ color: '#6b7280' }}>
-          {profile?.courses?.code} · {profile?.courses?.name} · {profile?.schools?.name}
+          {profile?.courses?.code} · {profile?.courses?.title} · {profile?.schools?.name}
         </p>
         <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginTop: '4px' }}>
           {user?.user_metadata?.full_name || user?.email}
