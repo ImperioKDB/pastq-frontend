@@ -39,7 +39,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!selectedDept) return
     setSelectedCourse('')
-    supabase.from('courses').select('id, name, code')
+    supabase.from('courses').select('id, title, code')
       .eq('department_id', selectedDept)
       .then(({ data }) => { if (data) setCourses(data) })
   }, [selectedDept])
@@ -89,7 +89,7 @@ export default function OnboardingPage() {
         <label style={labelStyle}>Course</label>
         <select style={selectStyle} value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)} disabled={!selectedDept}>
           <option value=''>Select course</option>
-          {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.name}</option>)}
+          {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
         </select>
 
         <button
@@ -113,4 +113,4 @@ const labelStyle = { display: 'block', fontWeight: '600', fontSize: '0.875rem', 
 const selectStyle = {
   width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db',
   fontSize: '0.95rem', marginBottom: '16px', background: '#fff', color: '#111827'
-    }
+                                     }
