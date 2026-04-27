@@ -100,4 +100,4 @@ function btnStyle(bg) {
     padding: '10px 20px', background: bg, color: '#fff', border: 'none',
     borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem'
   }
-    }
+        }
