@@ -12,35 +12,40 @@ export default function DashboardPage() {
   const [stats, setStats] = useState(null)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth/login'); return }
-      setUser(user)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { router.push('/auth/login'); return }
+        setUser(user)
 
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('*, schools(name), departments(name), courses(id, title, code)')
-        .eq('user_id', user.id)
-        .single()
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('*, schools(name), departments(name), courses(id, title, code)')
+          .eq('user_id', user.id)
+          .single()
 
-      if (!profile) { router.push('/onboarding'); return }
-      setProfile(profile)
+        if (!profile) { router.push('/onboarding'); return }
+        setProfile(profile)
 
-      const { data: questions } = await supabase
-        .from('questions')
-        .select('type')
-        .eq('course_id', profile.course_id)
+        const { data: questions } = await supabase
+          .from('questions')
+          .select('type')
+          .eq('course_id', profile.course_id)
 
-      if (questions) {
-        const total = questions.length
-        const mcq = questions.filter(q => q.type === 'mcq').length
-        const theory = questions.filter(q => q.type === 'theory').length
-        setStats({ total, mcq, theory })
+        if (questions) {
+          const total = questions.length
+          const mcq = questions.filter(q => q.type === 'mcq').length
+          const theory = questions.filter(q => q.type === 'theory').length
+          setStats({ total, mcq, theory })
+        }
+      } catch (err) {
+        setError('Failed to load dashboard. Please try again.')
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     }
     load()
   }, [])
@@ -48,6 +53,12 @@ export default function DashboardPage() {
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: '#6b7280' }}>Loading dashboard...</p>
+    </div>
+  )
+
+  if (error) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#dc2626' }}>{error}</p>
     </div>
   )
 
@@ -71,7 +82,8 @@ export default function DashboardPage() {
 
       <div style={{ marginTop: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
         <button onClick={() => router.push('/quiz')} style={btnStyle('#10b981')}>Start Quiz</button>
-        <button onClick={() => router.push('/browse')} style={btnStyle('#3b82f6')}>Browse Questions</button>
+        {/* Fixed: was '/browse' which 404'd — correct route is '/questions' */}
+        <button onClick={() => router.push('/questions')} style={btnStyle('#3b82f6')}>Browse Questions</button>
         <button onClick={() => router.push('/onboarding')} style={btnStyle('#6b7280')}>Change Course</button>
       </div>
 
@@ -100,4 +112,4 @@ function btnStyle(bg) {
     padding: '10px 20px', background: bg, color: '#fff', border: 'none',
     borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem'
   }
-        }
+}
