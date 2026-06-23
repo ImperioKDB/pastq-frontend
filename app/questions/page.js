@@ -1,18 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { renderMath } from '@/lib/utils/math';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
-
-function renderMath(text) {
-  if (!text) return text;
-  return String(text)
-    .replace(/\^-1/g, '⁻¹').replace(/\^-2/g, '⁻²').replace(/\^2/g, '²').replace(/\^3/g, '³')
-    .replace(/_2/g, '₂').replace(/_3/g, '₃')
-    .replace(/\bpi\b/gi, 'π').replace(/\btheta\b/gi, 'θ')
-    .replace(/\bdelta\b/gi, 'δ').replace(/\bsigma\b/gi, 'σ')
-    .replace(/\binfinity\b/gi, '∞');
-}
 
 export default function QuestionsPage() {
   const [questions, setQuestions] = useState([]);
@@ -24,52 +15,54 @@ export default function QuestionsPage() {
   const [topic, setTopic] = useState('');
   const [year, setYear] = useState('');
 
-  useEffect(() => {
-    async function init() {
-      try {
-        setLoading(true);
-        const cRes = await fetch(`${API}/api/courses`);
-        const cData = await cRes.json();
-        if (Array.isArray(cData)) setCourses(cData);
-
-        const qRes = await fetch(`${API}/api/questions`);
-        const qData = await qRes.json();
-        if (Array.isArray(qData)) setQuestions(qData);
-      } catch (e) {
-        setError('Failed to connect to the server.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    init();
-  }, []);
-
-  const handleFilter = async (e) => {
-    e.preventDefault();
+  const fetchQuestions = useCallback(async ({ courseId = '', year = '', topic = '' } = {}) => {
     setLoading(true);
+    setError(null);
     try {
       let url = `${API}/api/questions?`;
       if (courseId) url += `course_id=${courseId}&`;
-      if (year) url += `year=${year}&`;
-      if (topic) url += `topic=${encodeURIComponent(topic)}&`;
+      if (year)     url += `year=${year}&`;
+      if (topic)    url += `topic=${encodeURIComponent(topic)}&`;
 
       const res = await fetch(url);
-      const data = await res.json();
-      setQuestions(Array.isArray(data) ? data : []);
+      const json = await res.json();
+      // Backend now returns { data, total, page, limit } — fall back to array for compatibility
+      setQuestions(Array.isArray(json) ? json : (json.data ?? []));
     } catch (e) {
-      setError('Error filtering questions.');
+      setError('Failed to connect to the server.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    async function init() {
+      try {
+        const cRes = await fetch(`${API}/api/courses`);
+        const cData = await cRes.json();
+        if (Array.isArray(cData)) setCourses(cData);
+      } catch (e) {
+        console.error('Failed to load courses', e);
+      }
+      await fetchQuestions();
+    }
+    init();
+  }, [fetchQuestions]);
+
+  const handleFilter = async (e) => {
+    e.preventDefault();
+    await fetchQuestions({ courseId, year, topic });
   };
 
-  const handleClear = () => {
+  // Fixed: was window.location.reload() — now a zero-network state reset
+  const handleClear = async () => {
     setCourseId('');
     setTopic('');
     setYear('');
-    window.location.reload();
+    await fetchQuestions({});
   };
 
-  const availableYears = [...new Set(questions.map(q => q.year).filter(Boolean))].sort((a, b) => b - a);
+  const availableYears  = [...new Set(questions.map(q => q.year).filter(Boolean))].sort((a, b) => b - a);
   const availableTopics = [...new Set(questions.map(q => q.topic).filter(Boolean))].sort();
 
   return (
@@ -91,25 +84,17 @@ export default function QuestionsPage() {
         }}>
           <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>COURSE</label>
-            <select
-              value={courseId}
-              onChange={e => setCourseId(e.target.value)}
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}
-            >
+            <select value={courseId} onChange={e => setCourseId(e.target.value)}
+              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}>
               <option value="">Select Course</option>
-              {courses.map(c => (
-                <option key={c.id} value={c.id}>{c.code} - {c.title}</option>
-              ))}
+              {courses.map(c => <option key={c.id} value={c.id}>{c.code} - {c.title}</option>)}
             </select>
           </div>
 
           <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>YEAR</label>
-            <select
-              value={year}
-              onChange={e => setYear(e.target.value)}
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}
-            >
+            <select value={year} onChange={e => setYear(e.target.value)}
+              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}>
               <option value="">All Years</option>
               {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -117,11 +102,8 @@ export default function QuestionsPage() {
 
           <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }}>TOPIC</label>
-            <select
-              value={topic}
-              onChange={e => setTopic(e.target.value)}
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}
-            >
+            <select value={topic} onChange={e => setTopic(e.target.value)}
+              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '4px' }}>
               <option value="">All Topics</option>
               {availableTopics.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
@@ -174,4 +156,4 @@ export default function QuestionsPage() {
       </div>
     </main>
   );
-  }
+}
