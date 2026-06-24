@@ -253,7 +253,7 @@ export default function LandingPage() {
             {[
               { n: '01', title: 'Upload a past question paper', body: 'Find a PDF or image of any past exam. Drag it onto the upload page.' },
               { n: '02', title: 'AI extracts the questions',    body: 'The AI reads every question, option, and answer and stores them in the database.' },
-              { n: '03', title: 'Browse, filter, practice',     body: 'Search by course and year. Start a quiz. Stop losing marks to questions you've already seen.' },
+              { n: '03', title: 'Browse, filter, practice',     body: "Search by course and year. Start a quiz. Stop losing marks to questions you've already seen." },
             ].map((step, i, arr) => (
               <div key={i} style={{ display: 'flex', gap: '24px', paddingBottom: i < arr.length - 1 ? '40px' : '0', position: 'relative' }}>
                 {/* Line */}
