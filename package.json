@@ -12,9 +12,5 @@
     "react-dom": "^18",
     "@supabase/ssr": "^0.5.2"
   },
-  "devDependencies": {
-    "tailwindcss": "^3",
-    "autoprefixer": "^10",
-    "postcss": "^8"
-  }
+  "devDependencies": {}
 }
