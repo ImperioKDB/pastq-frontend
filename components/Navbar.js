@@ -9,8 +9,8 @@ export default function Navbar() {
   const supabase  = createClient()
   const router    = useRouter()
   const pathname  = usePathname()
-  const [user, setUser]       = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser]         = useState(null)
+  const [loading, setLoading]   = useState(true)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -35,21 +35,8 @@ export default function Navbar() {
     router.push('/')
   }
 
-  // Don't render navbar on auth pages
   const isAuthPage = pathname?.startsWith('/auth')
   if (isAuthPage) return null
-
-  const navStyle = {
-    position: 'sticky', top: 0, zIndex: 100,
-    width: '100%',
-    padding: '0 24px',
-    height: '60px',
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    background: scrolled ? 'rgba(8,8,16,0.85)' : 'transparent',
-    backdropFilter: scrolled ? 'blur(16px)' : 'none',
-    borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-    transition: 'background 300ms var(--ease), border-color 300ms var(--ease), backdrop-filter 300ms var(--ease)',
-  }
 
   const links = [
     { href: '/questions', label: 'Browse' },
@@ -58,20 +45,26 @@ export default function Navbar() {
   ]
 
   return (
-    <nav style={navStyle} role="navigation" aria-label="Main navigation">
+    <nav
+      role="navigation"
+      aria-label="Main navigation"
+      style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        width: '100%', padding: '0 24px', height: '60px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        background: scrolled ? 'var(--bg-overlay)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--border-subtle)' : '1px solid transparent',
+        transition: 'background var(--dur-normal) var(--ease-out), border-color var(--dur-normal) var(--ease-out)',
+      }}
+    >
       {/* Wordmark */}
-      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '1px', textDecoration: 'none' }}>
-        <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 700,
-          color: 'var(--text)', letterSpacing: '-0.02em',
-        }}>Past</span>
-        <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 700,
-          color: 'var(--green)', letterSpacing: '-0.02em',
-        }}>Q</span>
+      <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>Past</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 700, color: 'var(--brand-primary)', letterSpacing: '-0.02em' }}>Q</span>
       </Link>
 
-      {/* Links */}
+      {/* Nav links + auth */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         {links.map(({ href, label }) => {
           const active = pathname === href
@@ -79,9 +72,9 @@ export default function Navbar() {
             <Link key={href} href={href} style={{
               padding: '6px 14px', borderRadius: 'var(--radius-sm)',
               fontSize: '14px', fontWeight: 500,
-              color: active ? 'var(--green)' : 'var(--muted)',
-              background: active ? 'var(--green-dim)' : 'transparent',
-              transition: 'color var(--dur) var(--ease), background var(--dur) var(--ease)',
+              color: active ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              background: active ? 'var(--brand-primary-muted)' : 'transparent',
+              transition: 'color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out)',
             }}>
               {label}
             </Link>
@@ -91,20 +84,18 @@ export default function Navbar() {
         {!loading && (
           <>
             {user ? (
-              <button onClick={handleSignOut} style={ghostBtn}>
-                Sign out
-              </button>
+              <button onClick={handleSignOut} style={ghostBtn}>Sign out</button>
             ) : (
               <>
-                <Link href="/auth/login" style={{ ...ghostBtn, display: 'inline-flex', alignItems: 'center' }}>
+                <Link href="/auth/login" style={{ ...ghostBtn, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
                   Log in
                 </Link>
                 <Link href="/auth/signup" style={{
                   padding: '7px 16px', borderRadius: 'var(--radius-sm)',
                   fontSize: '14px', fontWeight: 600,
-                  background: 'var(--green)', color: '#080810',
-                  display: 'inline-flex', alignItems: 'center',
-                  transition: 'opacity var(--dur) var(--ease)',
+                  background: 'var(--brand-primary)', color: 'var(--text-inverse)',
+                  display: 'inline-flex', alignItems: 'center', textDecoration: 'none',
+                  transition: 'opacity var(--dur-fast) var(--ease-out)',
                 }}>
                   Sign up
                 </Link>
@@ -120,6 +111,7 @@ export default function Navbar() {
 const ghostBtn = {
   padding: '7px 14px', borderRadius: 'var(--radius-sm)',
   fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-  color: 'var(--muted)', background: 'transparent', border: 'none',
-  transition: 'color var(--dur) var(--ease)',
+  color: 'var(--text-secondary)', background: 'transparent', border: 'none',
+  fontFamily: 'var(--font-body)',
+  transition: 'color var(--dur-fast) var(--ease-out)',
 }
