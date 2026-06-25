@@ -1,3 +1,4 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
 
 *, *::before, *::after {
@@ -63,11 +64,11 @@
   --radius-full: 9999px;
 
   /* ── Shadows ── */
-  --shadow-sm:         0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md:         0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg:         0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-glow:       0 0 24px rgba(212, 160, 23, 0.2);
-  --shadow-glow-strong:0 0 40px rgba(212, 160, 23, 0.35);
+  --shadow-sm:          0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md:          0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg:          0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow:        0 0 24px rgba(212, 160, 23, 0.2);
+  --shadow-glow-strong: 0 0 40px rgba(212, 160, 23, 0.35);
 
   /* ── Animation ── */
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
@@ -77,6 +78,22 @@
   --dur-fast:    150ms;
   --dur-normal:  250ms;
   --dur-slow:    400ms;
+
+  /* ── Aliases — backwards-compat shims for inner pages ── */
+  /* Maps the shorthand tokens used in quiz/questions/auth to the canonical vars above. */
+  --bg:        var(--bg-base);
+  --text:      var(--text-primary);
+  --muted:     var(--text-secondary);
+  --muted-2:   var(--text-tertiary);
+  --surface:   var(--bg-elevated);
+  --surface-2: #252220;
+  --border:    var(--border-default);
+  --border-2:  var(--border-strong);
+  --green:     var(--success);
+  --green-dim: var(--success-muted);
+  --red:       var(--error);
+  --red-dim:   var(--error-muted);
+  --font-sans: var(--font-body);
 }
 
 html {
@@ -119,6 +136,10 @@ a {
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
