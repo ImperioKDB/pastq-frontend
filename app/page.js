@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
-// ── Fade-in hook ──────────────────────────────────────────────────────────────
 function useFadeIn(delay = 0) {
   const ref = useRef(null)
   useEffect(() => {
@@ -20,7 +19,6 @@ function useFadeIn(delay = 0) {
   return ref
 }
 
-// ── Animated counter ──────────────────────────────────────────────────────────
 function Counter({ target, suffix = '' }) {
   const [val, setVal] = useState(0)
   const ref = useRef(null)
@@ -52,7 +50,7 @@ export default function LandingPage() {
   return (
     <main style={{ minHeight: '100vh', background: 'var(--bg-base)', overflowX: 'hidden', fontFamily: 'var(--font-body)' }}>
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      {/* HERO */}
       <section style={{
         minHeight: '92vh',
         display: 'flex', flexDirection: 'column',
@@ -60,14 +58,10 @@ export default function LandingPage() {
         textAlign: 'center', padding: '80px 24px 60px',
         position: 'relative', isolation: 'isolate',
       }}>
-
-        {/* Ambient glow */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0, zIndex: -1,
           background: 'radial-gradient(ellipse 60% 50% at 50% 20%, rgba(212,160,23,0.07) 0%, transparent 70%)',
         }} />
-
-        {/* Grid lines */}
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0, zIndex: -1, opacity: 0.25,
           backgroundImage: 'linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px)',
@@ -75,7 +69,6 @@ export default function LandingPage() {
           maskImage: 'radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%)',
         }} />
 
-        {/* Badge */}
         <div ref={badge} style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           padding: '4px 14px 4px 6px',
@@ -95,7 +88,6 @@ export default function LandingPage() {
           </span>
         </div>
 
-        {/* Headline */}
         <h1 ref={hero} style={{
           fontSize: 'clamp(32px, 6.5vw, 72px)', fontWeight: 800,
           lineHeight: 1.05, letterSpacing: '-0.03em',
@@ -109,7 +101,6 @@ export default function LandingPage() {
           <br />We have got you.
         </h1>
 
-        {/* Subhead */}
         <p ref={sub} style={{
           fontSize: 'clamp(16px, 2.2vw, 19px)', color: 'var(--text-secondary)',
           maxWidth: '500px', lineHeight: 1.7, marginBottom: '44px',
@@ -118,7 +109,6 @@ export default function LandingPage() {
           Practiced until you cannot get them wrong.
         </p>
 
-        {/* CTAs */}
         <div ref={ctas} style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href="/questions">
             <button
@@ -153,35 +143,27 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        {/* Scroll hint */}
         <div style={{ position: 'absolute', bottom: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)', letterSpacing: '0.12em' }}>SCROLL</span>
           <div style={{ width: '1px', height: '32px', background: 'linear-gradient(to bottom, var(--border-default), transparent)' }} />
         </div>
       </section>
 
-      {/* ── STATS ────────────────────────────────────────────────────────── */}
-      <section style={{
-        padding: '64px 24px',
-        borderTop: '1px solid var(--border-subtle)',
-        borderBottom: '1px solid var(--border-subtle)',
-      }}>
+      {/* STATS */}
+      <section style={{ padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{
           maxWidth: '840px', margin: '0 auto',
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: '40px', textAlign: 'center',
         }}>
           {[
-            { num: 10847, suffix: '',       label: 'Questions extracted' },
-            { num: 4302,  suffix: '',       label: 'Students practicing this week' },
-            { num: 6,     suffix: '',       label: 'Universities covered' },
+            { num: 10847, suffix: '',          label: 'Questions extracted' },
+            { num: 4302,  suffix: '',          label: 'Students practicing this week' },
+            { num: 6,     suffix: '',          label: 'Universities covered' },
             { num: 2019,  suffix: '–2024', label: 'Years available' },
           ].map((s, i) => (
             <div key={i}>
-              <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: 'clamp(28px,4vw,42px)',
-                fontWeight: 700, color: 'var(--brand-primary)', lineHeight: 1, marginBottom: '8px',
-              }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(28px,4vw,42px)', fontWeight: 700, color: 'var(--brand-primary)', lineHeight: 1, marginBottom: '8px' }}>
                 <Counter target={s.num} suffix={s.suffix} />
               </div>
               <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{s.label}</div>
@@ -190,7 +172,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────────────────── */}
+      {/* TESTIMONIALS */}
       <section style={{ padding: '96px 24px' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--brand-primary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '16px', textAlign: 'center' }}>
@@ -217,7 +199,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────────────────────────── */}
+      {/* FEATURES */}
       <section style={{ padding: '96px 24px', borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-elevated)' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--brand-primary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '16px', textAlign: 'center' }}>
@@ -228,16 +210,16 @@ export default function LandingPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px,1fr))', gap: '2px' }}>
             {[
-              { icon: <UploadIcon />,  title: 'Upload anything',        desc: 'PDF, photo, scan — the AI reads every question, option, and answer regardless of format or print quality.' },
-              { icon: <SearchIcon />,  title: 'Find in seconds',        desc: 'Filter by course code, year, topic, or difficulty. No more scrolling through 50-page PDFs the night before.' },
-              { icon: <QuizIcon />,    title: 'Practice under pressure', desc: 'Randomised MCQ sessions. Submit an answer, see if you were right, review everything after.' },
-              { icon: <GrowthIcon />,  title: 'Always growing',         desc: 'Every upload adds to the bank. The more students contribute, the more everyone benefits.' },
+              { icon: <UploadIcon />, title: 'Upload anything',         desc: 'PDF, photo, scan — the AI reads every question, option, and answer regardless of format or print quality.' },
+              { icon: <SearchIcon />, title: 'Find in seconds',         desc: 'Filter by course code, year, topic, or difficulty. No more scrolling through 50-page PDFs the night before.' },
+              { icon: <QuizIcon />,   title: 'Practice under pressure', desc: 'Randomised MCQ sessions. Submit an answer, see if you were right, review everything after.' },
+              { icon: <GrowthIcon />, title: 'Always growing',          desc: 'Every upload adds to the bank. The more students contribute, the more everyone benefits.' },
             ].map((f, i) => <FeatureCard key={i} {...f} />)}
           </div>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ─────────────────────────────────────────────────── */}
+      {/* HOW IT WORKS */}
       <section style={{ padding: '96px 24px' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--brand-primary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '16px', textAlign: 'center' }}>
@@ -248,9 +230,9 @@ export default function LandingPage() {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {[
-              { n: '01', title: 'Snap or upload a past question paper',         body: 'Find any PDF or image of a past exam. Drag it onto the upload page — messy scans included.' },
+              { n: '01', title: 'Snap or upload a past question paper',          body: 'Find any PDF or image of a past exam. Drag it onto the upload page — messy scans included.' },
               { n: '02', title: 'We read the messy scans so you do not have to', body: 'The AI extracts every question, option, and answer. No manual typing, no missed questions.' },
-              { n: '03', title: 'Practice until you cannot get them wrong',      body: 'Filter by course and year. Start a quiz. Stop losing marks to questions you have already seen.' },
+              { n: '03', title: 'Practice until you cannot get them wrong',       body: 'Filter by course and year. Start a quiz. Stop losing marks to questions you have already seen.' },
             ].map((step, i, arr) => (
               <div key={i} style={{ display: 'flex', gap: '24px', paddingBottom: i < arr.length - 1 ? '44px' : '0', position: 'relative' }}>
                 {i < arr.length - 1 && (
@@ -275,7 +257,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
+      {/* CTA */}
       <section style={{ padding: '96px 24px', borderTop: '1px solid var(--border-subtle)' }}>
         <div style={{
           maxWidth: '560px', margin: '0 auto',
@@ -310,13 +292,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
+      {/* FOOTER */}
       <footer style={{ borderTop: '1px solid var(--border-subtle)', padding: '32px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', maxWidth: '960px', margin: '0 auto' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
           Past<span style={{ color: 'var(--brand-primary)' }}>Q</span>
         </span>
         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-          &copy; 2026 · Built for Nigerian university students
+          © 2026 · Built for Nigerian university students
         </span>
         <div style={{ display: 'flex', gap: '20px' }}>
           {[['Browse', '/questions'], ['Quiz', '/quiz'], ['Sign up', '/auth/signup']].map(([label, href]) => (
@@ -331,7 +313,6 @@ export default function LandingPage() {
   )
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
 function FeatureCard({ icon, title, desc }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -341,7 +322,7 @@ function FeatureCard({ icon, title, desc }) {
       style={{
         padding: '32px',
         background: hovered ? 'var(--bg-elevated)' : 'var(--bg-base)',
-        border: \`1px solid \${hovered ? 'var(--border-default)' : 'var(--border-subtle)'}\`,
+        border: '1px solid ' + (hovered ? 'var(--border-default)' : 'var(--border-subtle)'),
         transition: 'background var(--dur-normal) ease, border-color var(--dur-normal) ease',
         cursor: 'default',
       }}
@@ -355,7 +336,6 @@ function FeatureCard({ icon, title, desc }) {
   )
 }
 
-// ── SVG Icons ─────────────────────────────────────────────────────────────────
 function UploadIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
