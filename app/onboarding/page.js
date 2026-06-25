@@ -6,16 +6,16 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function OnboardingPage() {
   const supabase = createClient()
-  const router = useRouter()
+  const router   = useRouter()
 
-  const [schools, setSchools] = useState([])
-  const [departments, setDepartments] = useState([])
-  const [courses, setCourses] = useState([])
+  const [schools,      setSchools]      = useState([])
+  const [departments,  setDepartments]  = useState([])
+  const [courses,      setCourses]      = useState([])
   const [selectedSchool, setSelectedSchool] = useState('')
-  const [selectedDept, setSelectedDept] = useState('')
+  const [selectedDept,   setSelectedDept]   = useState('')
   const [selectedCourse, setSelectedCourse] = useState('')
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
+  const [error,  setError]  = useState('')
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -52,10 +52,10 @@ export default function OnboardingPage() {
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
     const { error: err } = await supabase.from('user_profiles').upsert({
-      user_id: user.id,
-      school_id: selectedSchool,
+      user_id:       user.id,
+      school_id:     selectedSchool,
       department_id: selectedDept,
-      course_id: selectedCourse
+      course_id:     selectedCourse,
     }, { onConflict: 'user_id' })
 
     if (err) {
@@ -66,51 +66,134 @@ export default function OnboardingPage() {
     }
   }
 
+  const step    = !selectedSchool ? 1 : !selectedDept ? 2 : 3
+  const canSave = !saving && selectedSchool && selectedDept && selectedCourse
+
+  const stepLabels = ['Your university', 'Your department', 'Your course']
+  const stepDescs  = [
+    'We will show you questions from your school.',
+    'Narrow down to your faculty.',
+    'Pick your subject to get started.',
+  ]
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: '#f9fafb' }}>
-      <div style={{ width: '100%', maxWidth: '480px', background: '#fff', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '8px' }}>Welcome to PastQ 👋</h1>
-        <p style={{ color: '#6b7280', marginBottom: '24px' }}>Select your course to get started</p>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-5)', fontFamily: 'var(--font-body)' }}>
+      <div style={{ width: '100%', maxWidth: '480px' }}>
 
-        {error && <p style={{ color: '#ef4444', marginBottom: '16px', fontSize: '0.875rem' }}>{error}</p>}
+        {/* Wordmark */}
+        <div style={{ marginBottom: 'var(--space-6)', textAlign: 'center' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+            Past<span style={{ color: 'var(--brand-primary)' }}>Q</span>
+          </span>
+        </div>
 
-        <label style={labelStyle}>University</label>
-        <select style={selectStyle} value={selectedSchool} onChange={e => setSelectedSchool(e.target.value)}>
-          <option value=''>Select university</option>
-          {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
+        {/* Card */}
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', padding: 'var(--space-7) var(--space-6)' }}>
 
-        <label style={labelStyle}>Department</label>
-        <select style={selectStyle} value={selectedDept} onChange={e => setSelectedDept(e.target.value)} disabled={!selectedSchool}>
-          <option value=''>Select department</option>
-          {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-        </select>
+          {/* Progress bar */}
+          <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-6)' }}>
+            {[1, 2, 3].map(n => (
+              <div key={n} style={{
+                flex: 1, height: '3px', borderRadius: '2px',
+                background: n <= step ? 'var(--brand-primary)' : 'var(--border-default)',
+                transition: 'background var(--dur-normal) var(--ease-out)',
+              }} />
+            ))}
+          </div>
 
-        <label style={labelStyle}>Course</label>
-        <select style={selectStyle} value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)} disabled={!selectedDept}>
-          <option value=''>Select course</option>
-          {courses.map(c => <option key={c.id} value={c.id}>{c.code} — {c.title}</option>)}
-        </select>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--brand-primary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 'var(--space-2)' }}>
+            STEP {step} OF 3
+          </p>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)', marginBottom: 'var(--space-2)', fontFamily: 'var(--font-display)' }}>
+            {stepLabels[step - 1]}
+          </h1>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--space-6)', lineHeight: 1.6 }}>
+            {stepDescs[step - 1]}
+          </p>
 
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          style={{
-            width: '100%', padding: '12px', borderRadius: '8px', border: 'none',
-            background: saving ? '#9ca3af' : '#10b981', color: '#fff',
-            fontWeight: '600', fontSize: '1rem', cursor: saving ? 'not-allowed' : 'pointer',
-            marginTop: '8px'
-          }}
-        >
-          {saving ? 'Saving...' : 'Go to Dashboard →'}
-        </button>
+          {error && (
+            <p style={{ fontSize: '13px', color: 'var(--error)', padding: 'var(--space-3) var(--space-4)', background: 'var(--error-muted)', borderRadius: 'var(--radius-sm)', marginBottom: 'var(--space-4)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+              {error}
+            </p>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+
+            <div>
+              <label style={labelStyle}>University</label>
+              <select style={selectStyle} value={selectedSchool} onChange={e => setSelectedSchool(e.target.value)}>
+                <option value="">Select university</option>
+                {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </div>
+
+            <div style={{ opacity: selectedSchool ? 1 : 0.45, transition: 'opacity var(--dur-normal) var(--ease-out)' }}>
+              <label style={labelStyle}>Department</label>
+              <select style={selectStyle} value={selectedDept} onChange={e => setSelectedDept(e.target.value)} disabled={!selectedSchool}>
+                <option value="">Select department</option>
+                {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+              </select>
+            </div>
+
+            <div style={{ opacity: selectedDept ? 1 : 0.45, transition: 'opacity var(--dur-normal) var(--ease-out)' }}>
+              <label style={labelStyle}>Course</label>
+              <select style={selectStyle} value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)} disabled={!selectedDept}>
+                <option value="">Select course</option>
+                {courses.map(c => <option key={c.id} value={c.id}>{c.code} &mdash; {c.title}</option>)}
+              </select>
+            </div>
+
+            <button
+              onClick={handleSave}
+              disabled={!canSave}
+              style={{
+                padding:      'var(--space-4)',
+                borderRadius: 'var(--radius-md)',
+                border:       'none',
+                background:   canSave ? 'var(--brand-primary)' : 'var(--border-default)',
+                color:        canSave ? 'var(--text-inverse)'  : 'var(--text-tertiary)',
+                fontWeight:   700,
+                fontSize:     '15px',
+                cursor:       canSave ? 'pointer' : 'not-allowed',
+                fontFamily:   'var(--font-body)',
+                boxShadow:    canSave ? 'var(--shadow-glow)' : 'none',
+                transition:   'background var(--dur-normal) var(--ease-out), color var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out)',
+              }}
+            >
+              {saving ? 'Saving…' : 'Go to dashboard →'}
+            </button>
+
+          </div>
+        </div>
+
       </div>
     </div>
   )
 }
 
-const labelStyle = { display: 'block', fontWeight: '600', fontSize: '0.875rem', marginBottom: '6px', color: '#374151' }
+const labelStyle = {
+  display:       'block',
+  fontSize:      '11px',
+  fontWeight:    500,
+  color:         'var(--text-tertiary)',
+  marginBottom:  'var(--space-2)',
+  letterSpacing: '0.08em',
+  fontFamily:    'var(--font-mono)',
+  textTransform: 'uppercase',
+}
+
 const selectStyle = {
-  width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db',
-  fontSize: '0.95rem', marginBottom: '16px', background: '#fff', color: '#111827'
-                                     }
+  width:        '100%',
+  padding:      'var(--space-3) var(--space-4)',
+  borderRadius: 'var(--radius-sm)',
+  border:       '1px solid var(--border-default)',
+  background:   'var(--bg-base)',
+  color:        'var(--text-primary)',
+  fontSize:     '14px',
+  fontFamily:   'var(--font-body)',
+  outline:      'none',
+  cursor:       'pointer',
+  appearance:       'none',
+  WebkitAppearance: 'none',
+  transition:   'border-color var(--dur-normal) var(--ease-out)',
+}
