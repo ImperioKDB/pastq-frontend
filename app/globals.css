@@ -150,3 +150,14 @@ a {
     scroll-behavior: auto !important;
   }
 }
+/* ── Mobile/Desktop Nav Toggles ── */
+.desktop-nav { display: flex; }
+.mobile-bottom-nav { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-nav { display: none !important; }
+  .mobile-bottom-nav { display: flex !important; }
+  body {
+    padding-bottom: 80px; /* Space for mobile bottom nav */
+  }
+}
