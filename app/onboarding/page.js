@@ -47,7 +47,8 @@ export default function OnboardingPage() {
 
   async function handleSave() {
     if (!selectedSchool || !selectedDept || !selectedCourse) {
-      setError('Please select all fields to continue.')      return
+      setError('Please select all fields to continue.')
+      return
     }
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
