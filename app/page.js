@@ -47,8 +47,8 @@ function Counter({ target, suffix = '' }) {
 export default function LandingPage() {
   const badge = useFadeIn(0)
   const hero  = useFadeIn(120)
-  const sub   = useFadeIn(240)  const ctas  = useFadeIn(360)
-
+  const sub   = useFadeIn(240)
+  const ctas  = useFadeIn(360)
   return (
     <main style={{ minHeight: '100vh', background: colors.bg.base, overflowX: 'hidden', fontFamily: typography.font.body }}>
       
