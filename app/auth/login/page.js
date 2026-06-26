@@ -17,8 +17,13 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) { setError(error.message); setLoading(false) }
-    else { router.push('/dashboard'); router.refresh() }
+    if (error) { 
+      setError("That email or password doesn't look right. Try again?")
+      setLoading(false) 
+    } else { 
+      router.push('/dashboard')
+      router.refresh() 
+    }
   }
 
   async function handleGoogle() {
@@ -31,20 +36,18 @@ export default function LoginPage() {
   return (
     <div style={pageStyle}>
       <div style={cardStyle}>
-
         <div style={{ marginBottom: '32px' }}>
           <Link href="/" style={{ fontFamily: 'var(--font-mono)', fontSize: '16px', fontWeight: 700, textDecoration: 'none' }}>
-            Past<span style={{ color: 'var(--green)' }}>Q</span>
+            Past<span style={{ color: 'var(--brand-primary)' }}>Q</span>
           </Link>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em', marginTop: '24px', marginBottom: '6px' }}>
-            Welcome back
+          <h1 style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em', marginTop: '24px', marginBottom: '6px', fontFamily: 'var(--font-display)' }}>
+            Welcome back, scholar.
           </h1>
-          <p style={{ fontSize: '14px', color: 'var(--muted)' }}>Log in to access your questions</p>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Log in to access your questions.</p>
         </div>
 
         <button onClick={handleGoogle} style={googleBtn}>
-          <GoogleIcon />
-          Continue with Google
+          <GoogleIcon />          Continue with your school email
         </button>
 
         <div style={dividerStyle}>
@@ -55,7 +58,7 @@ export default function LoginPage() {
           <div>
             <label style={labelStyle} htmlFor="login-email">Email</label>
             <input id="login-email" type="email" value={email}
-              onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required
+              onChange={e => setEmail(e.target.value)} placeholder="you@uniben.edu" required
               style={inputStyle} />
           </div>
           <div>
@@ -64,9 +67,9 @@ export default function LoginPage() {
               onChange={e => setPassword(e.target.value)} placeholder="••••••••" required
               style={inputStyle} />
           </div>
-
+          
           {error && (
-            <p role="alert" style={{ fontSize: '13px', color: 'var(--red)', padding: '10px 12px', background: 'var(--red-dim)', borderRadius: 'var(--radius-sm)' }}>
+            <p role="alert" style={{ fontSize: '13px', color: 'var(--error)', padding: '10px 12px', background: 'var(--error-muted)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
               {error}
             </p>
           )}
@@ -76,11 +79,10 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--muted)', marginTop: '24px' }}>
-          No account?{' '}
-          <Link href="/auth/signup" style={{ color: 'var(--green)', fontWeight: 500 }}>Sign up</Link>
+        <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-secondary)', marginTop: '24px' }}>
+          New here?{' '}
+          <Link href="/auth/signup" style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>Create an account</Link>
         </p>
-
       </div>
     </div>
   )
@@ -94,15 +96,14 @@ function GoogleIcon() {
       <path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6z"/>
       <path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.6l-7.5-5.8c-2.1 1.4-4.8 2.3-7.9 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.7 42.6 14.7 48 24 48z"/>
     </svg>
-  )
-}
+  )}
 
-const pageStyle = { minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'var(--font-sans)' }
-const cardStyle = { width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '40px 36px' }
-const googleBtn = { width: '100%', padding: '11px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-2)', background: 'var(--surface-2)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '20px', fontFamily: 'var(--font-sans)', fontWeight: 500 }
-const dividerStyle = { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }
-const dividerLine = { flex: 1, height: '1px', background: 'var(--border)' }
-const dividerText = { fontSize: '12px', color: 'var(--muted)' }
-const labelStyle = { display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--muted)', marginBottom: '6px' }
-const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'var(--font-sans)', transition: 'border-color 200ms' }
-const submitBtn = { width: '100%', padding: '12px', borderRadius: 'var(--radius-sm)', border: 'none', background: 'var(--green)', color: '#080810', fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-sans)' }
+const pageStyle = { minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'var(--font-body)' }
+const cardStyle = { width: '100%', maxWidth: '400px', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', padding: '40px 36px' }
+const googleBtn = { width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', background: 'var(--bg-base)', color: 'var(--text-primary)', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '24px', fontFamily: 'var(--font-body)', fontWeight: 500, transition: 'border-color 200ms' }
+const dividerStyle = { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }
+const dividerLine = { flex: 1, height: '1px', background: 'var(--border-subtle)' }
+const dividerText = { fontSize: '12px', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const labelStyle = { display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }
+const inputStyle = { width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', background: 'var(--bg-base)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'var(--font-body)', transition: 'border-color 200ms' }
+const submitBtn = { width: '100%', padding: '13px', borderRadius: 'var(--radius-md)', border: 'none', background: 'var(--brand-primary)', color: 'var(--text-inverse)', fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-body)', boxShadow: 'var(--shadow-glow)', transition: 'opacity 200ms' }
