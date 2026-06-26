@@ -1,17 +1,9 @@
 'use client'
 import { useState, useEffect, useReducer } from 'react'
 import Link from 'next/link'
+import { renderMath } from '@/lib/utils/math'
 
 const API = process.env.NEXT_PUBLIC_API_URL
-
-function renderMath(text) {
-  if (!text) return text
-  return String(text)
-    .replace(/\^-3/g, '⁻³').replace(/\^-2/g, '⁻²').replace(/\^-1/g, '⁻¹')
-    .replace(/\^2/g, '²').replace(/\^3/g, '³')
-    .replace(/sqrt\(([^)]+)\)/g, '√($1)')
-    .replace(/\bpi\b/gi, 'π').replace(/\btheta\b/gi, 'θ')
-}
 
 function stripLetter(opt) {
   if (!opt) return opt
@@ -55,8 +47,7 @@ export default function QuizPage() {
   }, [])
 
   async function startQuiz() {
-    if (!state.courseId) return
-    setLoading(true); setLoadErr(null)
+    if (!state.courseId) return    setLoading(true); setLoadErr(null)
     try {
       const res  = await fetch(`${API}/api/questions?type=mcq&limit=200&course_id=${state.courseId}`)
       const json = await res.json()
@@ -74,7 +65,7 @@ export default function QuizPage() {
         <Link href="/" style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--muted)', textDecoration: 'none', marginBottom: '48px', display: 'block' }}>← Back</Link>
         <h1 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '8px' }}>Practice Quiz</h1>
         <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '40px' }}>Randomised MCQs. Exam conditions.</p>
-
+        
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <Field label="Course">
             <select value={state.courseId} onChange={e => dispatch({ type: 'SET', key: 'courseId', val: e.target.value })} style={selectStyle}>
@@ -105,8 +96,7 @@ export default function QuizPage() {
       <main style={mainStyle}>
         <div style={{ maxWidth: '640px', margin: '0 auto', padding: '60px 24px' }}>
           {/* Score card */}
-          <div style={{ padding: '40px', border: `1px solid ${pct >= 70 ? 'rgba(127,255,110,0.3)' : 'rgba(255,77,77,0.3)'}`, borderRadius: '16px', background: 'var(--surface)', marginBottom: '40px', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '64px', fontWeight: 700, color: pct >= 70 ? 'var(--green)' : 'var(--red)', lineHeight: 1, marginBottom: '8px' }}>{pct}%</div>
+          <div style={{ padding: '40px', border: `1px solid ${pct >= 70 ? 'rgba(127,255,110,0.3)' : 'rgba(255,77,77,0.3)'}`, borderRadius: '16px', background: 'var(--surface)', marginBottom: '40px', textAlign: 'center' }}>            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '64px', fontWeight: 700, color: pct >= 70 ? 'var(--green)' : 'var(--red)', lineHeight: 1, marginBottom: '8px' }}>{pct}%</div>
             <p style={{ fontSize: '16px', color: 'var(--muted)' }}>{correct} of {state.answers.length} correct</p>
             <p style={{ fontSize: '13px', color: 'var(--muted-2)', marginTop: '6px' }}>
               {pct >= 70 ? 'Above 70% — good result.' : 'Below 70% — review the answers below and try again.'}
@@ -134,7 +124,6 @@ export default function QuizPage() {
               )
             })}
           </div>
-
           <div style={{ display: 'flex', gap: '12px' }}>
             <button onClick={() => dispatch({ type: 'RESTART' })} style={primaryBtn}>Try again</button>
             <Link href="/questions"><button style={outlineBtn}>Browse questions</button></Link>
@@ -156,8 +145,7 @@ export default function QuizPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--muted)', fontFamily: 'var(--font-mono)', marginBottom: '10px' }}>
           <span>{state.current + 1} / {state.questions.length}</span>
           <span>{state.answers.filter(a => a.selected === a.question.answer).length} correct</span>
-        </div>
-        <div style={{ height: '3px', background: 'var(--border)', borderRadius: '2px', marginBottom: '36px' }}>
+        </div>        <div style={{ height: '3px', background: 'var(--border)', borderRadius: '2px', marginBottom: '36px' }}>
           <div style={{ height: '100%', width: `${pct}%`, background: 'var(--green)', borderRadius: '2px', transition: 'width 300ms cubic-bezier(0.16,1,0.3,1)' }} />
         </div>
 
@@ -206,8 +194,7 @@ export default function QuizPage() {
           : <button onClick={() => dispatch({ type: 'NEXT' })} style={{ ...primaryBtn, width: '100%' }}>
               {state.current + 1 < state.questions.length ? 'Next →' : 'See results →'}
             </button>
-        }
-      </div>
+        }      </div>
     </main>
   )
 }
