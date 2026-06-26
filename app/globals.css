@@ -12,7 +12,7 @@
   --bg-base:        #0C0A09;
   --bg-elevated:    #1C1917;
   --bg-overlay:     rgba(12, 10, 9, 0.85);
-
+  
   /* ── Text ── */
   --text-primary:   #FAF9F6;
   --text-secondary: #A8A29E;
@@ -35,33 +35,22 @@
   --warning:       #F59E0B;
   --warning-muted: rgba(245, 158, 11, 0.12);
 
-  /* ── Borders ── */
+  /* ─ Borders ── */
   --border-subtle:  #292524;
   --border-default: #44403C;
   --border-strong:  #57534E;
 
-  /* ── Typography ── */
+  /* ── Typography ─ */
   --font-display: 'Clash Display', 'Cabinet Grotesk', system-ui, sans-serif;
   --font-body:    'Inter', 'Source Serif 4', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 
   /* ── Spacing ── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
-  --space-8: 64px;
-  --space-9: 96px;
-
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
   /* ── Border Radius ── */
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   16px;
-  --radius-xl:   24px;
-  --radius-full: 9999px;
+  --radius-sm:   6px;  --radius-md:   10px; --radius-lg:   16px;
+  --radius-xl:   24px; --radius-full: 9999px;
 
   /* ── Shadows ── */
   --shadow-sm:          0 1px 2px rgba(0, 0, 0, 0.3);
@@ -74,25 +63,14 @@
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --dur-instant: 100ms;
-  --dur-fast:    150ms;
-  --dur-normal:  250ms;
-  --dur-slow:    400ms;
+  --dur-instant: 100ms; --dur-fast: 150ms; --dur-normal: 250ms; --dur-slow: 400ms;
 
-  /* ── Aliases — backwards-compat shims for inner pages ── */
-  /* Maps the shorthand tokens used in quiz/questions/auth to the canonical vars above. */
-  --bg:        var(--bg-base);
-  --text:      var(--text-primary);
-  --muted:     var(--text-secondary);
-  --muted-2:   var(--text-tertiary);
-  --surface:   var(--bg-elevated);
-  --surface-2: #252220;
-  --border:    var(--border-default);
-  --border-2:  var(--border-strong);
-  --green:     var(--success);
-  --green-dim: var(--success-muted);
-  --red:       var(--error);
-  --red-dim:   var(--error-muted);
+  /* ── Aliases ── */
+  --bg: var(--bg-base); --text: var(--text-primary); --muted: var(--text-secondary);
+  --muted-2: var(--text-tertiary); --surface: var(--bg-elevated); --surface-2: #252220;
+  --border: var(--border-default); --border-2: var(--border-strong);
+  --green: var(--success); --green-dim: var(--success-muted);
+  --red: var(--error); --red-dim: var(--error-muted);
   --font-sans: var(--font-body);
 }
 
@@ -110,23 +88,18 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   line-height: 1.6;
+  /* Cinematic Noise Texture Overlay */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+a { text-decoration: none; color: inherit; }
 
 :focus-visible {
   outline: 2px solid var(--brand-primary);
-  outline-offset: 3px;
-  border-radius: var(--radius-sm);
+  outline-offset: 3px;  border-radius: var(--radius-sm);
 }
 
-::selection {
-  background: var(--brand-primary-muted);
-  color: var(--brand-primary);
-}
+::selection { background: var(--brand-primary-muted); color: var(--brand-primary); }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
@@ -137,10 +110,7 @@ a {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -150,6 +120,7 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
 /* ── Mobile/Desktop Nav Toggles ── */
 .desktop-nav { display: flex; }
 .mobile-bottom-nav { display: none; }
@@ -157,7 +128,5 @@ a {
 @media (max-width: 768px) {
   .desktop-nav { display: none !important; }
   .mobile-bottom-nav { display: flex !important; }
-  body {
-    padding-bottom: 80px; /* Space for mobile bottom nav */
-  }
+  body { padding-bottom: 80px; }
 }
