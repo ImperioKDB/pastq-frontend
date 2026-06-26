@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -7,12 +6,12 @@ import { createClient } from '@/lib/supabase/client'
 export default function DashboardPage() {
   const supabase = createClient()
   const router   = useRouter()
-
+  
   const [profile, setProfile] = useState(null)
-  const [stats,   setStats]   = useState(null)
-  const [user,    setUser]    = useState(null)
+  const [stats, setStats]     = useState(null)
+  const [user, setUser]       = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const [error, setError]     = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -42,14 +41,13 @@ export default function DashboardPage() {
           setStats({ total, mcq, theory })
         }
       } catch {
-        setError('Failed to load dashboard. Please try again.')
+        setError('Failed to load your dashboard. Please try again.')
       } finally {
         setLoading(false)
       }
     }
     load()
   }, [])
-
   if (loading) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }}>
@@ -70,24 +68,23 @@ export default function DashboardPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', fontFamily: 'var(--font-body)', padding: 'var(--space-7) var(--space-5)' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-
         {/* Header */}
         <div style={{ marginBottom: 'var(--space-7)' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--brand-primary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 'var(--space-2)' }}>
-            DASHBOARD
+            COMMAND CENTER
           </p>
           <h1 style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', marginBottom: 'var(--space-2)', lineHeight: 1.1 }}>
             How far, {displayName}.
           </h1>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            {profile?.courses?.code} &middot; {profile?.courses?.title} &middot; {profile?.schools?.name}
+            {profile?.courses?.code} · {profile?.courses?.title} · {profile?.schools?.name}
           </p>
         </div>
 
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
-          <StatCard value={stats?.total  ?? 0} label="Total"  accent="var(--brand-primary)" />
-          <StatCard value={stats?.mcq    ?? 0} label="MCQ"    accent="var(--success)" />
+          <StatCard value={stats?.total ?? 0} label="Total Qs" accent="var(--brand-primary)" />
+          <StatCard value={stats?.mcq ?? 0} label="MCQs" accent="var(--success)" />
           <StatCard value={stats?.theory ?? 0} label="Theory" accent="var(--warning)" />
         </div>
 
@@ -99,8 +96,7 @@ export default function DashboardPage() {
             onClick={() => router.push('/quiz')}
             primary
           />
-          <ActionRow
-            title="Browse questions"
+          <ActionRow            title="Browse questions"
             desc="Filter by year, topic, and type"
             onClick={() => router.push('/questions')}
           />
@@ -113,7 +109,6 @@ export default function DashboardPage() {
 
         {/* Sign out */}
         <SignOutBtn supabase={supabase} router={router} />
-
       </div>
     </div>
   )
@@ -122,10 +117,10 @@ export default function DashboardPage() {
 function StatCard({ value, label, accent }) {
   return (
     <div style={{
-      background:    'var(--bg-elevated)',
-      border:        '1px solid var(--border-subtle)',
-      borderRadius:  'var(--radius-lg)',
-      padding:       'var(--space-5)',
+      background: 'var(--bg-elevated)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-lg)',
+      padding: 'var(--space-5)',
     }}>
       <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 'clamp(22px, 3.5vw, 32px)', fontWeight: 700, color: accent, lineHeight: 1, marginBottom: 'var(--space-1)' }}>
         {value.toLocaleString()}
@@ -147,13 +142,12 @@ function ActionRow({ title, desc, onClick, primary }) {
       style={{
         width: '100%', textAlign: 'left',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding:      'var(--space-5)',
-        background:   hovered && primary ? 'var(--brand-primary-muted)' : 'var(--bg-elevated)',
-        border:       '1px solid ' + (hovered ? (primary ? 'var(--brand-primary-glow)' : 'var(--border-default)') : 'var(--border-subtle)'),
-        borderRadius: 'var(--radius-lg)',
-        cursor:       'pointer',
-        transition:   'border-color var(--dur-normal) var(--ease-out), background var(--dur-normal) var(--ease-out)',
-        fontFamily:   'var(--font-body)',
+        padding: 'var(--space-5)',
+        background: hovered && primary ? 'var(--brand-primary-muted)' : 'var(--bg-elevated)',
+        border: '1px solid ' + (hovered ? (primary ? 'var(--brand-primary-glow)' : 'var(--border-default)') : 'var(--border-subtle)'),
+        borderRadius: 'var(--radius-lg)',        cursor: 'pointer',
+        transition: 'border-color var(--dur-normal) var(--ease-out), background var(--dur-normal) var(--ease-out)',
+        fontFamily: 'var(--font-body)',
       }}
     >
       <div>
@@ -163,7 +157,7 @@ function ActionRow({ title, desc, onClick, primary }) {
         <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{desc}</p>
       </div>
       <span style={{ color: primary ? 'var(--brand-primary)' : 'var(--text-tertiary)', fontSize: '16px', flexShrink: 0, marginLeft: 'var(--space-4)' }}>
-        &rarr;
+        →
       </span>
     </button>
   )
@@ -177,14 +171,10 @@ function SignOutBtn({ supabase, router }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background:  'none',
-        border:      'none',
-        color:       hovered ? 'var(--error)' : 'var(--text-tertiary)',
-        cursor:      'pointer',
-        fontSize:    '13px',
-        fontFamily:  'var(--font-body)',
-        padding:     '0',
-        transition:  'color var(--dur-fast) var(--ease-out)',
+        background: 'none', border: 'none',
+        color: hovered ? 'var(--error)' : 'var(--text-tertiary)',
+        cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-body)',
+        padding: '0', transition: 'color var(--dur-fast) var(--ease-out)',
       }}
     >
       Sign out
